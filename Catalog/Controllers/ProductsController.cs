@@ -2,6 +2,7 @@
 using Catalog.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Controllers;
 
@@ -20,7 +21,9 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public ActionResult<List<Product>> Get()
     {
-        var products = _context.products.ToList();
+
+        //.AsNoTracking() para otimizar consultas onde ele define que a consulta não sera rastreada
+        var products = _context.products.AsNoTracking().ToList();
 
         if (products.Count == 0)
         {
@@ -33,7 +36,8 @@ public class ProductsController : ControllerBase
     [HttpGet("{id:int}")]
     public ActionResult<List<Product>> GetById(int id)
     {
-        var product = _context.products.FirstOrDefault(c => c.Id == id);
+        //.AsNoTracking() para otimizar consultas onde ele define que a consulta não sera rastreada
+        var product = _context.products.AsNoTracking().FirstOrDefault(c => c.Id == id);
 
         if (product is null)
         {

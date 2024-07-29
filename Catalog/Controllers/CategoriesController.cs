@@ -21,7 +21,8 @@ public class CategoriesController : ControllerBase
     [HttpGet]
     public ActionResult<List<Category>> Get()
     {
-        var categories = _context.categories.Include(p => p.Products).ToList();
+        //.AsNoTracking() para otimizar consultas onde ele define que a consulta não sera rastreada
+        var categories = _context.categories.Include(p => p.Products).AsNoTracking().ToList();
 
         if (categories.Count == 0)
         {
@@ -34,7 +35,8 @@ public class CategoriesController : ControllerBase
     [HttpGet("{id:int}")]
     public ActionResult<List<Category>> GetById(int id)
     {
-        var category = _context.categories.FirstOrDefault(c=> c.Id == id);
+        //.AsNoTracking() para otimizar consultas onde ele define que a consulta não sera rastreada
+        var category = _context.categories.AsNoTracking().FirstOrDefault(c=> c.Id == id);
 
         if (category is null)
         {
