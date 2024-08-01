@@ -19,11 +19,11 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<List<Product>> Get()
+    public async Task<ActionResult<List<Product>>> GetAsync()
     {
 
         //.AsNoTracking() para otimizar consultas onde ele define que a consulta não sera rastreada
-        var products = _context.products.AsNoTracking().ToList();
+        var products = await _context.products.AsNoTracking().ToListAsync();
 
         if (products.Count == 0)
         {
@@ -34,10 +34,10 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<List<Product>> GetById(int id)
+    public async Task<ActionResult<List<Product>>> GetById(int id)
     {
         //.AsNoTracking() para otimizar consultas onde ele define que a consulta não sera rastreada
-        var product = _context.products.AsNoTracking().FirstOrDefault(c => c.Id == id);
+        var product = await _context.products.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
         if (product is null)
         {
@@ -48,17 +48,17 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult Post(Product product)
+    public async Task<ActionResult> PostAsync(Product product)
     {
         _context.products.Add(product);
 
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return Ok();
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult Put(int id, Product product)
+    public async Task< ActionResult> PutAsync(int id, Product product)
     {
         if (id != product.Id)
         {
@@ -67,7 +67,7 @@ public class ProductsController : ControllerBase
 
         _context.Entry(product).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return Ok(product);
     }
