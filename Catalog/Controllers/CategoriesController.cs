@@ -21,29 +21,43 @@ public class CategoriesController : ControllerBase
     [HttpGet]
     public ActionResult<List<Category>> Get()
     {
-        //.AsNoTracking() para otimizar consultas onde ele define que a consulta não sera rastreada
-        var categories = _context.categories.Include(p => p.Products).AsNoTracking().ToList();
-
-        if (categories.Count == 0)
+        try
         {
-            return NotFound();
-        }
+            //.AsNoTracking() para otimizar consultas onde ele define que a consulta não sera rastreada
+            var categories = _context.categories.Include(p => p.Products).AsNoTracking().ToList();
 
-        return Ok(categories);
+            if (categories.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(categories);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Falha ao prosseguir com a requisição.");
+        }
     }
 
     [HttpGet("{id:int}")]
     public ActionResult<List<Category>> GetById(int id)
     {
-        //.AsNoTracking() para otimizar consultas onde ele define que a consulta não sera rastreada
-        var category = _context.categories.AsNoTracking().FirstOrDefault(c=> c.Id == id);
-
-        if (category is null)
+        try
         {
-            return NotFound();
-        }
+            //.AsNoTracking() para otimizar consultas onde ele define que a consulta não sera rastreada
+            var category = _context.categories.AsNoTracking().FirstOrDefault(c => c.Id == id);
 
-        return Ok(category);
+            if (category is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(category);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Falha ao prosseguir com a requisição.");
+        }
     }
 
     [HttpPost]
@@ -57,9 +71,9 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult Put(int id,Category category)
+    public ActionResult Put(int id, Category category)
     {
-        if(id != category.Id)
+        if (id != category.Id)
         {
             return BadRequest();
         }
