@@ -1,6 +1,5 @@
 ﻿using Catalog.Context;
 using Catalog.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,12 +18,12 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<List<Category>> Get()
+    public async Task<ActionResult<List<Category>>> GetAsync()
     {
         try
         {
             //.AsNoTracking() para otimizar consultas onde ele define que a consulta não sera rastreada
-            var categories = _context.categories.Include(p => p.Products).AsNoTracking().ToList();
+            var categories = await _context.categories.Include(p => p.Products).AsNoTracking().ToListAsync();
 
             if (categories.Count == 0)
             {
@@ -40,12 +39,12 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<List<Category>> GetById(int id)
+    public async Task< ActionResult<List<Category>>> GetByIdAsync(int id)
     {
         try
         {
             //.AsNoTracking() para otimizar consultas onde ele define que a consulta não sera rastreada
-            var category = _context.categories.AsNoTracking().FirstOrDefault(c => c.Id == id);
+            var category = await _context.categories.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
             if (category is null)
             {
@@ -61,17 +60,17 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult Post(Category category)
+    public async Task<ActionResult> PostAsync(Category category)
     {
         _context.categories.Add(category);
 
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return Ok();
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult Put(int id, Category category)
+    public async Task<ActionResult> PutAsync(int id, Category category)
     {
         if (id != category.Id)
         {
@@ -80,7 +79,7 @@ public class CategoriesController : ControllerBase
 
         _context.Entry(category).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 
-        _context.SaveChanges();
+       await _context.SaveChangesAsync();
 
         return Ok(category);
     }
